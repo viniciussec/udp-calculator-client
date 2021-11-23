@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        background-color: pink;
+      }
+      .calculator {
+        height: 640px;
+        width: 480px;
+        background-color: #3b5998;
+        border-radius: 5%;
+        margin-top: 100px;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        border-bottom: solid black 5px;
+        border-right: solid black 5px;
+      }
+
+      .calculator-button {
+        background-color: gray;
+        border-radius: 10%;
+        margin: 20px 12px;
+        font-size: x-large;
+        color: white;
+      }
+
+      .calculator-visor {
+        border: 5px gray solid;
+        background-color: #aaa;
+        grid-column: span 3 / span 3;
+        margin: 15px;
+        border-radius: 5%;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        padding-right: 20px;
+        font-size: xx-large;
+        overflow: hidden;
+      }
+
+      .equals {
+        background-color: #469536;
+      }
+
+      .ce {
+        background-color: #cc7000;
+      }
+
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="calculator">
+      <div class="calculator-visor">0</div>
+      <button onclick="clearVisor(this)" class="calculator-button ce">
+        CE
+      </button>
+      <button onclick="buttonClick(this)" class="calculator-button">7</button>
+      <button onclick="buttonClick(this)" class="calculator-button">8</button>
+      <button onclick="buttonClick(this)" class="calculator-button">9</button>
+      <button onclick="buttonClick(this)" class="calculator-button">/</button>
+      <button onclick="buttonClick(this)" class="calculator-button">4</button>
+      <button onclick="buttonClick(this)" class="calculator-button">5</button>
+      <button onclick="buttonClick(this)" class="calculator-button">6</button>
+      <button onclick="buttonClick(this)" class="calculator-button">X</button>
+      <button onclick="buttonClick(this)" class="calculator-button">1</button>
+      <button onclick="buttonClick(this)" class="calculator-button">2</button>
+      <button onclick="buttonClick(this)" class="calculator-button">3</button>
+      <button onclick="buttonClick(this)" class="calculator-button">-</button>
+      <button onclick="buttonClick(this)" class="calculator-button">0</button>
+      <button onclick="buttonClick(this)" class="calculator-button">.</button>
+      <button onclick="equalsClick(this)" class="calculator-button equals">
+        =
+      </button>
+      <button onclick="buttonClick(this)" class="calculator-button">+</button>
+    </div>
+    <script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.0/socket.io.min.js"></script>
+    <script>
+      function buttonClick(element, isOperator) {
+        const label = element.innerHTML;
+
+        if (document.querySelector(".calculator-visor").innerHTML === "0")
+          document.querySelector(".calculator-visor").innerHTML = label;
+        else document.querySelector(".calculator-visor").innerHTML += label;
+      }
+
+      function clearVisor() {
+        document.querySelector(".calculator-visor").innerHTML = 0;
+        const res3 = $.post("/clear");
+      }
+
+      function equalsClick() {
+        const visor_value =
+          document.querySelector(".calculator-visor").innerHTML;
+        const res = $.post("/calculate", { string: visor_value });
+        const res2 = $.ajax("/result").done(
+          (data) =>
+            (document.querySelector(".calculator-visor").innerHTML =
+              data.string)
+        );
+      }
+    </script>
+  </body>
+</html>
